@@ -144,17 +144,17 @@ function handleShareAction() {
 	const rd = roomsData[activeRoomIndex];
 	const roomName = rd.roomName.trim();
 	const password = rd.password || '';
-	
+
 	// Encrypt room name and password
 	const encryptedRoom = simpleEncrypt(roomName);
 	const encryptedPwd = password ? simpleEncrypt(password) : '';
-	
+
 	// Create share URL with encrypted data
 	let url = `${location.origin}${location.pathname}?r=${encodeURIComponent(encryptedRoom)}`;
 	if (encryptedPwd) {
 		url += `&p=${encodeURIComponent(encryptedPwd)}`;
 	}
-	
+
 	copyToClipboard(url, t('action.share_copied', 'Share link copied!'), t('action.copy_url_failed', 'Copy failed, url:'));
 }
 
@@ -219,11 +219,11 @@ export function setupMobileUIHandlers() {
 	updateMobileBtnDisplay();
 	window.addEventListener('resize', updateMobileBtnDisplay);
 	if (mobileMenuBtn && sidebar && sidebarMask) {
-		mobileMenuBtn.onclick = function(e) {
+		mobileMenuBtn.onclick = function (e) {
 			e.stopPropagation();
 			sidebar.classList.add('mobile-open');
 			sidebarMask.classList.add('active')
-		};		sidebarMask.onclick = function() {
+		}; sidebarMask.onclick = function () {
 			// Check if settings sidebar is open
 			if (settingsSidebar && settingsSidebar.classList.contains('mobile-open')) {
 				closeSettingsPanel();
@@ -234,17 +234,17 @@ export function setupMobileUIHandlers() {
 		}
 	}
 	if (mobileInfoBtn && rightbar && rightbarMask) {
-		mobileInfoBtn.onclick = function(e) {
+		mobileInfoBtn.onclick = function (e) {
 			e.stopPropagation();
 			rightbar.classList.add('mobile-open');
 			rightbarMask.classList.add('active')
 		};
-		rightbarMask.onclick = function() {
+		rightbarMask.onclick = function () {
 			rightbar.classList.remove('mobile-open');
 			rightbarMask.classList.remove('active')
 		}
 	}	// Consolidated click event listener for closing sidebars
-	document.addEventListener('click', function(ev) {
+	document.addEventListener('click', function (ev) {
 		const settingsBtn = $id('settings-btn');
 		const isSettingsButtonClick = settingsBtn && settingsBtn.contains(ev.target);
 		const isSettingsBackButtonClick = $id('settings-back-btn') && $id('settings-back-btn').contains(ev.target);
@@ -323,7 +323,7 @@ export function createUserItem(user, isMe) {
 	div.className = 'member' + (isMe ? ' me' : '') + (isPrivateTarget ? ' private-chat-active' : '');
 	const rawName = user.userName || user.username || user.name || '';
 	const safeUserName = escapeHTML(rawName);
-	div.innerHTML = `<span class="avatar"></span><div class="member-info"><div class="member-name">${safeUserName}${isMe?t('ui.me', ' (me)'):''}</div></div>`;
+	div.innerHTML = `<span class="avatar"></span><div class="member-info"><div class="member-name">${safeUserName}${isMe ? t('ui.me', ' (me)') : ''}</div></div>`;
 	const avatarEl = div.querySelector('.avatar');
 	if (avatarEl) {
 		const svg = createAvatarSVG(rawName);
@@ -367,7 +367,7 @@ export function setupMoreBtnMenu() {
 		}, 300);
 	}
 
-	btn.onclick = function(e) {
+	btn.onclick = function (e) {
 		e.stopPropagation();
 		if (menu.classList.contains('open')) {
 			closeMenu();
@@ -376,7 +376,7 @@ export function setupMoreBtnMenu() {
 		}
 	};
 
-	menu.onclick = function(e) {
+	menu.onclick = function (e) {
 		if (e.target.classList.contains('more-menu-item')) {
 			const action = e.target.dataset.action;
 			executeMenuAction(action, closeMenu);
@@ -389,11 +389,11 @@ export function setupMoreBtnMenu() {
 		}
 	});
 
-	menu.addEventListener('animationend', function(e) {
+	menu.addEventListener('animationend', function (e) {
 		animating = false;
 	});
 
-	menu.addEventListener('transitionend', function(e) {
+	menu.addEventListener('transitionend', function (e) {
 		animating = false;
 	});
 }
@@ -402,13 +402,13 @@ export function setupMoreBtnMenu() {
 // 禁止输入空格和特殊字符
 export function preventSpaceInput(input) {
 	if (!input) return;
-	input.addEventListener('keydown', function(e) {
+	input.addEventListener('keydown', function (e) {
 		if (e.key === ' ' || (/[\u0000-\u007f]/.test(e.key) && /[\p{P}\p{S}]/u.test(e.key) && e.key !== "'")) {
 			e.preventDefault()
 		}
 	});
-	input.addEventListener('input', function(e) {
-		input.value = input.value.replace(/[\s\p{P}\p{S}]/gu, function(match) {
+	input.addEventListener('input', function (e) {
+		input.value = input.value.replace(/[\s\p{P}\p{S}]/gu, function (match) {
 			return match === "'" ? "'" : ''
 		})
 	})
@@ -417,7 +417,7 @@ export function preventSpaceInput(input) {
 // Login form submit handler
 // 登录表单提交处理函数
 export function loginFormHandler(modal) {
-	return function(e) {
+	return function (e) {
 		e.preventDefault();
 		let userName, roomName, password, btn, roomInput, warnTip;
 		if (modal) {
@@ -454,16 +454,16 @@ export function loginFormHandler(modal) {
 				roomInput.parentNode.appendChild(warnTip);
 				roomInput._warnTip = warnTip;
 				roomInput.focus()
-			}			if (btn) {
+			} if (btn) {
 				btn.disabled = false;
 				btn.innerText = t('ui.enter', 'ENTER')
 			}
 			return
-		}		if (btn) {
+		} if (btn) {
 			btn.disabled = true;
 			btn.innerText = t('ui.connecting', 'Connecting...')
 		}
-		window.joinRoom(userName, roomName, password, modal, function(success) {
+		window.joinRoom(userName, roomName, password, modal, function (success) {
 			if (!success && btn) {
 				btn.disabled = false;
 				btn.innerText = 'ENTER'
@@ -479,12 +479,13 @@ export function generateLoginForm(isModal = false) {
 	return `		<div class="input-group">
 			<div class="input-container">
 				<input id="userName${idPrefix}" type="text" autocomplete="username" required minlength="1" maxlength="15" placeholder="">
+				<label for="userName${idPrefix}" class="floating-label">${t('ui.username', 'Username')}</label>
 			</div>
-			<label for="userName${idPrefix}" class="floating-label">${t('ui.username', 'Username')}</label>
 		</div>
 		<div class="input-group">
 			<div class="input-container">
 				<input id="roomName${idPrefix}" type="text" required minlength="1" maxlength="15" placeholder="">
+				<label for="roomName${idPrefix}" class="floating-label">${t('ui.node_name', 'Node Name')}</label>
 				<button type="button" class="random-btn" id="randomRoomName${idPrefix}" title="${t('ui.generate_random', 'Generate Random')}">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M18 4L22 8L18 12L14 8L18 4Z" fill="currentColor"/>
@@ -493,11 +494,11 @@ export function generateLoginForm(isModal = false) {
 					</svg>
 				</button>
 			</div>
-			<label for="roomName${idPrefix}" class="floating-label">${t('ui.node_name', 'Node Name')}</label>
 		</div>
 		<div class="input-group">
 			<div class="input-container">
 				<input id="password${idPrefix}" type="password" autocomplete="${isModal ? 'off' : 'current-password'}" minlength="1" maxlength="15" placeholder="">
+				<label for="password${idPrefix}" class="floating-label">${t('ui.node_password', 'Node Password')} <span class="optional">${t('ui.optional', '(optional)')}</span></label>
 				<button type="button" class="random-btn" id="randomPassword${idPrefix}" title="${t('ui.generate_random', 'Generate Random')}">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M18 4L22 8L18 12L14 8L18 4Z" fill="currentColor"/>
@@ -506,7 +507,6 @@ export function generateLoginForm(isModal = false) {
 					</svg>
 				</button>
 			</div>
-			<label for="password${idPrefix}" class="floating-label">${t('ui.node_password', 'Node Password')} <span class="optional">${t('ui.optional', '(optional)')}</span></label>
 		</div>
 		<button type="submit" class="login-btn">${t('ui.enter', 'ENTER')}</button>
 	`;
@@ -519,7 +519,7 @@ export function openLoginModal() {
 	modal.querySelector('.login-modal-close').onclick = () => modal.remove();
 	preventSpaceInput(modal.querySelector('#userName-modal'));
 	preventSpaceInput(modal.querySelector('#roomName-modal'));
-	preventSpaceInput(modal.querySelector('#password-modal'));	const form = modal.querySelector('#login-form-modal');
+	preventSpaceInput(modal.querySelector('#password-modal')); const form = modal.querySelector('#login-form-modal');
 	form.addEventListener('submit', loginFormHandler(modal));
 	autofillRoomPwd('-modal');
 	setupRandomButtons('-modal');
@@ -530,7 +530,7 @@ export function openLoginModal() {
 export function setupTabs() {
 	const tabs = document.getElementById("member-tabs").children;
 	for (let i = 0; i < tabs.length; i++) {
-		tabs[i].onclick = function() {
+		tabs[i].onclick = function () {
 			for (let j = 0; j < tabs.length; j++) tabs[j].classList.remove("active");
 			this.classList.add("active")
 		}
@@ -541,19 +541,19 @@ export function setupTabs() {
 // 从 URL 自动填充房间和密码
 export function autofillRoomPwd(formPrefix = '') {
 	const params = new URLSearchParams(window.location.search);
-	
+
 	// Check for new encrypted format first
 	const encryptedRoom = params.get('r');
 	const encryptedPwd = params.get('p');
-	
+
 	// Check for old plaintext format (for backward compatibility)
 	const plaintextRoom = params.get('node');
 	const plaintextPwd = params.get('pwd');
-	
+
 	let roomValue = '';
 	let pwdValue = '';
 	let isPlaintext = false;
-	
+
 	if (encryptedRoom) {
 		// New encrypted format
 		roomValue = simpleDecrypt(decodeURIComponent(encryptedRoom));
@@ -567,13 +567,13 @@ export function autofillRoomPwd(formPrefix = '') {
 			pwdValue = decodeURIComponent(plaintextPwd);
 		}
 		isPlaintext = true;
-		
+
 		// Show security warning for plaintext URLs
 		if (window.addSystemMsg) {
 			window.addSystemMsg(t('system.security_warning', '⚠️ This link uses an old format. Room data is not encrypted.'), true);
 		}
 	}
-		// Fill in the form fields
+	// Fill in the form fields
 	if (roomValue) {
 		const roomInput = document.getElementById(formPrefix + 'roomName');
 		if (roomInput) {
@@ -581,13 +581,13 @@ export function autofillRoomPwd(formPrefix = '') {
 			roomInput.readOnly = true;
 			roomInput.style.background = isPlaintext ? '#fff9e6' : '#f5f5f5'; // Yellow tint for plaintext
 		}
-				// Always lock password field when coming from a share link
+		// Always lock password field when coming from a share link
 		const pwdInput = document.getElementById(formPrefix + 'password');
 		if (pwdInput) {
 			pwdInput.value = pwdValue; // Will be empty string if no password
 			pwdInput.readOnly = true;
 			pwdInput.style.background = isPlaintext ? '#fff9e6' : '#f5f5f5'; // Yellow tint for plaintext
-			
+
 			// Add visual indicator for no password and keep label floating
 			if (!pwdValue) {
 				pwdInput.placeholder = 'No password required';
@@ -598,7 +598,7 @@ export function autofillRoomPwd(formPrefix = '') {
 			}
 		}
 	}
-	
+
 	// Clear URL parameters for security
 	if (roomValue || pwdValue) {
 		window.history.replaceState({}, '', location.pathname);
@@ -614,11 +614,11 @@ export function initLoginForm() {
 		// Only initialize if login form is empty
 		loginFormContainer.innerHTML = generateLoginForm(false);
 	}
-	
+
 	// 为登录页面添加class，用于手机适配
 	// Add class to login page for mobile adaptation
 	document.body.classList.add('login-page');
-	
+
 	// 添加随机生成按钮的事件监听器
 	// Add event listeners for random generation buttons
 	setupRandomButtons('');
@@ -631,13 +631,13 @@ function setupRandomButtons(prefix) {
 	const randomPwdBtn = document.getElementById(`randomPassword${prefix}`);
 	const roomInput = document.getElementById(`roomName${prefix}`);
 	const pwdInput = document.getElementById(`password${prefix}`);
-	
+
 	if (randomRoomBtn && roomInput) {
 		randomRoomBtn.addEventListener('click', () => {
 			roomInput.value = generateRandomString(12);
 		});
 	}
-	
+
 	if (randomPwdBtn && pwdInput) {
 		randomPwdBtn.addEventListener('click', () => {
 			pwdInput.value = generateRandomString(12);
@@ -651,7 +651,7 @@ window.addEventListener('languageChange', () => {
 	// Refresh main header and user list
 	renderMainHeader();
 	renderUserList(false);
-	
+
 	// Refresh chat input placeholder
 	updateChatInputStyle();
 });
@@ -672,15 +672,15 @@ export function initFlipCard() {
 	const flipCard = document.getElementById('flip-card');
 	const helpBtn = document.getElementById('help-btn');
 	const backBtn = document.getElementById('back-btn');
-	
+
 	if (!flipCard || !helpBtn || !backBtn) return;
-	
+
 	const flipCardInner = flipCard.querySelector('.flip-card-inner');
 	if (!flipCardInner) return;
-	
+
 	// 翻转状态
 	let isFlipped = false;
-	
+
 	// 简单的翻转函数
 	function toggleFlip() {
 		isFlipped = !isFlipped;
@@ -690,14 +690,14 @@ export function initFlipCard() {
 			flipCardInner.classList.remove('flipped');
 		}
 	}
-	
+
 	// 帮助按钮点击事件
 	helpBtn.addEventListener('click', (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 		toggleFlip();
 	});
-	
+
 	// 返回按钮点击事件
 	backBtn.addEventListener('click', (e) => {
 		e.preventDefault();
