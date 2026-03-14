@@ -56,6 +56,17 @@ function simpleDecrypt(encrypted) {
 	}
 }
 
+// Generate a random string of specified length
+// 生成指定长度的随机字符串
+function generateRandomString(length = 12) {
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	for (let i = 0; i < length; i++) {
+		result += chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+	return result;
+}
+
 // Validate room data
 // 验证房间数据
 function validateRoomData(roomData) {
@@ -466,15 +477,35 @@ export function loginFormHandler(modal) {
 export function generateLoginForm(isModal = false) {
 	const idPrefix = isModal ? '-modal' : '';
 	return `		<div class="input-group">
-			<input id="userName${idPrefix}" type="text" autocomplete="username" required minlength="1" maxlength="15" placeholder="">
+			<div class="input-container">
+				<input id="userName${idPrefix}" type="text" autocomplete="username" required minlength="1" maxlength="15" placeholder="">
+			</div>
 			<label for="userName${idPrefix}" class="floating-label">${t('ui.username', 'Username')}</label>
 		</div>
 		<div class="input-group">
-			<input id="roomName${idPrefix}" type="text" required minlength="1" maxlength="15" placeholder="">
+			<div class="input-container">
+				<input id="roomName${idPrefix}" type="text" required minlength="1" maxlength="15" placeholder="">
+				<button type="button" class="random-btn" id="randomRoomName${idPrefix}" title="${t('ui.generate_random', 'Generate Random')}">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M18 4L22 8L18 12L14 8L18 4Z" fill="currentColor"/>
+						<path d="M2 8L6 12L2 16L6 20L10 16L6 12L10 8L6 4L2 8Z" fill="currentColor"/>
+						<path d="M14 16L18 20L22 16L18 12L14 16Z" fill="currentColor"/>
+					</svg>
+				</button>
+			</div>
 			<label for="roomName${idPrefix}" class="floating-label">${t('ui.node_name', 'Node Name')}</label>
 		</div>
 		<div class="input-group">
-			<input id="password${idPrefix}" type="password" autocomplete="${isModal ? 'off' : 'current-password'}" minlength="1" maxlength="15" placeholder="">
+			<div class="input-container">
+				<input id="password${idPrefix}" type="password" autocomplete="${isModal ? 'off' : 'current-password'}" minlength="1" maxlength="15" placeholder="">
+				<button type="button" class="random-btn" id="randomPassword${idPrefix}" title="${t('ui.generate_random', 'Generate Random')}">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M18 4L22 8L18 12L14 8L18 4Z" fill="currentColor"/>
+						<path d="M2 8L6 12L2 16L6 20L10 16L6 12L10 8L6 4L2 8Z" fill="currentColor"/>
+						<path d="M14 16L18 20L22 16L18 12L14 16Z" fill="currentColor"/>
+					</svg>
+				</button>
+			</div>
 			<label for="password${idPrefix}" class="floating-label">${t('ui.node_password', 'Node Password')} <span class="optional">${t('ui.optional', '(optional)')}</span></label>
 		</div>
 		<button type="submit" class="login-btn">${t('ui.enter', 'ENTER')}</button>
@@ -490,7 +521,8 @@ export function openLoginModal() {
 	preventSpaceInput(modal.querySelector('#roomName-modal'));
 	preventSpaceInput(modal.querySelector('#password-modal'));	const form = modal.querySelector('#login-form-modal');
 	form.addEventListener('submit', loginFormHandler(modal));
-	autofillRoomPwd('-modal')
+	autofillRoomPwd('-modal');
+	setupRandomButtons('-modal');
 }
 
 // Setup member list tabs
@@ -586,6 +618,31 @@ export function initLoginForm() {
 	// 为登录页面添加class，用于手机适配
 	// Add class to login page for mobile adaptation
 	document.body.classList.add('login-page');
+	
+	// 添加随机生成按钮的事件监听器
+	// Add event listeners for random generation buttons
+	setupRandomButtons('');
+}
+
+// Setup random generation buttons
+// 设置随机生成按钮
+function setupRandomButtons(prefix) {
+	const randomRoomBtn = document.getElementById(`randomRoomName${prefix}`);
+	const randomPwdBtn = document.getElementById(`randomPassword${prefix}`);
+	const roomInput = document.getElementById(`roomName${prefix}`);
+	const pwdInput = document.getElementById(`password${prefix}`);
+	
+	if (randomRoomBtn && roomInput) {
+		randomRoomBtn.addEventListener('click', () => {
+			roomInput.value = generateRandomString(12);
+		});
+	}
+	
+	if (randomPwdBtn && pwdInput) {
+		randomPwdBtn.addEventListener('click', () => {
+			pwdInput.value = generateRandomString(12);
+		});
+	}
 }
 
 // Listen for language change events to refresh UI
@@ -605,6 +662,7 @@ window.addEventListener('regenerateLoginForm', () => {
 	const loginFormContainer = document.getElementById('login-form');
 	if (loginFormContainer) {
 		loginFormContainer.innerHTML = generateLoginForm(false);
+		setupRandomButtons('');
 	}
 });
 
